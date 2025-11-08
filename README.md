@@ -68,13 +68,21 @@ python client.py
 
 ### Escolha o número da operação que deseja executar
 === MENU DE OPERAÇÕES ===
+
 1 - Mostrar lista
+
 2 - Inserir número no final
+
 3 - Inserir número em posição específica
+
 4 - Limpar lista
+
 5 - Sair
+
 6 - Remover número em uma posição específica
+
 7 - Buscar elemento
+
 8 - Ordenar lista
 
 ## Observações sobre o desenvolvimento do trabalho
