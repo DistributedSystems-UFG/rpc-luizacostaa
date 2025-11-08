@@ -86,19 +86,25 @@ python client.py
 8 - Ordenar lista
 
 ## Observações sobre o desenvolvimento do trabalho
+
+
 - IMplementei cada operação aos poucos
-- Implementei a função de append, mas logo percebi a necessidade de implementar logs de conexão 
-	- on_connect: serviu para mostrar em que momento o cliente se conectou
-	- on_disconnect: serviu para mostrar o momento de desconexão feito pelo cliente
-	- exposed_ping: serviu para conferir se o servidor ainda estava conectado. Apliquei essa função em vários momentos para que o usuário não completasse uma operação para logo descobrir que ela não é mais válida por falta de conexão com o servidor
+- Implementei a função de append, mas logo percebi a necessidade de implementar logs de conexão 
+- on_connect: serviu para mostrar em que momento o cliente se conectou
+- on_disconnect: serviu para mostrar o momento de desconexão feito pelo cliente
+- exposed_ping: serviu para conferir se o servidor ainda estava conectado. Apliquei essa função em vários momentos para que o usuário não realize uma operação para logo descobrir que ela não é mais válida por falta de conexão com o servidor
 - Usei a função exposed_show para mostrar a lista em funções que tem a remoção, adição ou atualização do vetor. A reutilização dessa função dentro de outas funções serviu para estudo de funções que chamam outras. Um exemplo de log causado por essa reutilização é:
-	[SERVER] 22:36:33 - insert()
-	[SERVER] 22:36:33 - show()
+[SERVER] 22:36:33 - insert()
+[SERVER] 22:36:33 - show()
 
 - Fiz tratamento das entradas que o usuário pode fazer
-- O RPyC ajudou bastante por ter funções já implementadas. Ele gera stubs automaticamente. Ele também permitiu que um processo chamasse funções de outro processo de forma remota via RPC.
 
-- Para impedir que qualquer erro vindo do servidor quebre o cliente, eu criei o safe_call, que é tipo um protetor de chamadas remotas. Porque, se, por exemplo, o cliente chamar uma função no servidor, porém se o servidor cair, fechar ou der erro, um feedback mais intuitivo será retornado ao cliente.
+- O RPyC ajudou bastante por já ter funções implementadas. Ele gera stubs automaticamente.Ele também permitiu que um processo chamasse funções de outro processo de forma remota via RPC. Sem o RPyC eu teria que trabalhar diretamente com sockets, o que abaixaria o nível mais baixo da comunicação de maquinas. Sem ele eu teria que definir manualmente o protocolo de troca de mensagens, decidir como os dados seriam estruturados, realizar a serialização e desserialização das informações, controlar a ordem das mensagens, tratar pacotes incompletos, lidar com buffers e implementar toda a lógica de tratamento de erros de conexão.
+
+- Para impedir que qualquer erro vindo do servidor quebre o cliente, eu criei o safe_call , que é tipo um protetor de chamadas remotas. Porque, se, por exemplo, o cliente chamar uma função no servidor, porém se o servidor cair, fechar ou der erro, um feedback mais intuitivo será retornado ao cliente.
+
+
+
 
 	
 	
