@@ -1,34 +1,96 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/_8sc1GR8)
-### Overview
+# Sistema Cliente-Servidor para Manipulação de Vetor (RPyC)
 
-This example illustrates RPC in Python using the RPyC library (https://rpyc.readthedocs.io/).
+Este projeto implementa um sistema simples de **cliente-servidor** utilizando `RPyC` (Remote Python Call), permitindo que o cliente envie comandos para manipular um vetor armazenado no servidor.  
+É um exercício de programação distribuída focado em comunicação remota, chamadas expostas e tratamento de erros.
 
-It consists of a server that exposes two remotely accessible procedures used to manipulate a list:
+---
 
-- value(): returns the current value of the list (its elements)
-- append(): adds a new element to the end of the list
+## Tecnologias utilizadas
 
-### Before running the example, you need to install the RPyC library:
+- **Python 3**
+- **RPyC** (Remote Python Call)
+- Comunicação via **TCP**
+- Execução do servidor e cliente em terminais separados
 
-Do the following on the two machines (AWS EC2 instances) that you will use for this activity:
+---
 
-    sudo apt update
-    sudo apt install python3-rpyc
+## Funcionalidades implementadas
 
-### Then edit the constRPYC.py file to use the IP address of the machine where you will run the server:
+O servidor mantém um vetor (lista) e o cliente envia operações para manipular esse vetor.  
+As operações disponíveis são:
 
-Also make sure it is using one of the ports left open for incoming TCP connections on the firewall (security group), such as 5678
+### 🔹 Exibir lista  
+Mostra o conteúdo atual do vetor. Realizada pela função exposed_show
 
-### Then run the server on one machine
+### 🔹 Inserir número no final  
+Adiciona um elemento ao final da lista. Realizada pela função exposed_append
 
-    python3 server.py
+### 🔹 Inserir número em posição específica  
+Permite escolher a posição e o valor a ser inserido. Realizada pela função exposed_insert
 
-(and leave it running)
+### 🔹 Limpar a lista  
+Remove todos os elementos do vetor. Realizada pela função exposed_clear
 
-### Then run the client on the other machine
+### 🔹 Remover elemento em posição específica  
+Remove o item da posição informada pelo usuário. Realizada pela função exposed_remove
 
-    python3 client.py
+### 🔹 Buscar valor  
+Retorna a posição onde o valor aparece (ou uma mensagem de não encontrado). Realizada pela função exposed_search
 
-### Now add other remote procedures to the server and change the client to test them
+### 🔹 Ordenar vetor  
+Ordena o vetor de forma crescente no servidor. Realizada pela função exposed_sort
 
-You may add the same remote procedures that you added in the sockets activity.
+### 🔹 Encerrar  
+Fecha o cliente (e opcionalmente o servidor, dependendo da implementação). Realizada pela função on_disconnect
+
+---
+
+## Como executar
+
+### Instale as dependências
+
+```bash
+pip install rpyc
+
+```
+
+### Inicie o servidor
+```bash
+python server.py
+
+```
+
+### Inicie o cliente
+```bash
+python client.py
+
+```
+
+### Escolha o número da operação que deseja executar
+=== MENU DE OPERAÇÕES ===
+1 - Mostrar lista
+2 - Inserir número no final
+3 - Inserir número em posição específica
+4 - Limpar lista
+5 - Sair
+6 - Remover número em uma posição específica
+7 - Buscar elemento
+8 - Ordenar lista
+
+## Observações sobre o desenvolvimento do trabalho
+- IMplementei cada operação aos poucos
+- Implementei a função de append, mas logo percebi a necessidade de implementar logs de conexão 
+	- on_connect: serviu para mostrar em que momento o cliente se conectou
+	- on_disconnect: serviu para mostrar o momento de desconexão feito pelo cliente
+	- exposed_ping: serviu para conferir se o servidor ainda estava conectado. Apliquei essa função em vários momentos para que o usuário não completasse uma operação para logo descobrir que ela não é mais válida por falta de conexão com o servidor
+- Usei a função exposed_show para mostrar a lista em funções que tem a remoção, adição ou atualização do vetor. A reutilização dessa função dentro de outas funções serviu para estudo de funções que chamam outras. Um exemplo de log causado por essa reutilização é:
+	[SERVER] 22:36:33 - insert()
+	[SERVER] 22:36:33 - show()
+
+- Fiz tratamento das entradas que o usuário pode fazer
+- O RPyC ajudou bastante por ter funções já implementadas. Ele gera stubs automaticamente. Ele também permitiu que um processo chamasse funções de outro processo de forma remota via RPC.
+
+- Para impedir que qualquer erro vindo do servidor quebre o cliente, eu criei o safe_call, que é tipo um protetor de chamadas remotas. Porque, se, por exemplo, o cliente chamar uma função no servidor, porém se o servidor cair, fechar ou der erro, um feedback mais intuitivo será retornado ao cliente.
+
+	
+	
